@@ -1,0 +1,54 @@
+ADBE,2020-07-13(sell)
+ADBE, len of eqs:4 stock open price: 434.9100036621094 closetopeqs: 2,3 closeboteqs: 0
+
+BLK,2020-07-15(buy*)
+BLK, len of eqs:2 stock open price: 572.280029296875 closetopeqs:  closeboteqs: 0,1
+
+CL,2020-07-14(buy*)
+CL, len of eqs:3 stock open price: 75.0 closetopeqs: 2 closeboteqs: 
+
+CSCO,2020-07-13(sell)
+CSCO, len of eqs:14 stock open price: 46.5 closetopeqs: 13 closeboteqs: 1,2,4,5,6,7,8,9,10
+
+DUK,2020-07-13(buy)
+DUK, len of eqs:1 stock open price: 82.4800033569336 closetopeqs:  closeboteqs: 
+
+F,2020-07-15(buy*)
+F, len of eqs:2 stock open price: 6.539999961853027 closetopeqs:  closeboteqs: 
+
+GE,2020-07-15(buy)
+GE, len of eqs:1 stock open price: 7.090000152587891 closetopeqs:  closeboteqs: 
+
+INTC,2020-07-14(buy)
+INTC, len of eqs:3 stock open price: 59.029998779296875 closetopeqs: 2 closeboteqs: 0,1
+
+KHC,2020-07-14(buy*)
+KHC, len of eqs:3 stock open price: 33.5 closetopeqs: 2 closeboteqs: 
+
+KO,2020-07-13(buy)
+KO, len of eqs:2 stock open price: 46.29999923706055 closetopeqs: 0,1 closeboteqs: 
+
+LOW,2020-07-15(buy*)
+LOW, len of eqs:3 stock open price: 142.27999877929688 closetopeqs:  closeboteqs: 
+
+MDLZ,2020-07-14(buy)
+MDLZ, len of eqs:5 stock open price: 53.349998474121094 closetopeqs: 1,2,3,4 closeboteqs: 
+
+MET,2020-07-14(buy*)
+MET, len of eqs:1 stock open price: 38.720001220703125 closetopeqs:  closeboteqs: 
+
+MO,2020-07-14(buy*)
+MO, len of eqs:1 stock open price: 41.34000015258789 closetopeqs:  closeboteqs: 
+
+MSFT,2020-07-15(sell)
+MSFT, len of eqs:3 stock open price: 209.55999755859375 closetopeqs:  closeboteqs: 2
+
+SBUX,2020-07-15(buy)
+SBUX, len of eqs:1 stock open price: 74.45999908447266 closetopeqs:  closeboteqs: 0
+
+T,2020-07-13(sell*),2020-07-15(buy)
+T, len of eqs:19 stock open price: 30.06999969482422 closetopeqs:  closeboteqs: 1,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18
+
+VZ,2020-07-14(buy)
+VZ, len of eqs:4 stock open price: 55.61000061035156 closetopeqs: 3 closeboteqs: 
+
