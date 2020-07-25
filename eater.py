@@ -39,10 +39,10 @@ def getforone():
     xvalues2eaters = []
     yvalues2eaters = []
     for spot in range(len(eaterlist)):
-        if eaterlist[spot] == 2:
+        if eaterlist[spot] == 'sred' or eaterlist[spot] == 'sgreen':
             xvalues2eaters.append(spot)
             yvalues2eaters.append(float(highpoints[spot]) + 10)
-        if eaterlist[spot] == 1:
+        if eaterlist[spot] == 'wred' or eaterlist[spot] == 'wgreen':
             xvalues1eaters.append(spot)
             yvalues1eaters.append(float(highpoints[spot]) + 10)
     plt.scatter(xvalues1eaters, yvalues1eaters, color='yellow', s=5)
@@ -76,32 +76,26 @@ def eater(data):    # send back list where each spot tells you if strong eater o
     highlist = data[1]
     lowlist = data[2]
     closelist = data[3]
-    eaterlist = [0]   # starts with a 0 because you cant check the first day but you have to have it in the list
+    eaterlist = ['no']   # starts with a 0 because you cant check the first day but you have to have it in the list
     for i in range(len(openlist)):
         if i == 0:
             continue
-        iseater = 0
-        if openlist[i] > closelist[i]: # checks if possible eater open is top of candle or bot and uses the top one
-            top = float(openlist[i])  # of possible eater
-            bot = float(closelist[i])
+        iseater = 'no'
+        if openlist[i] > closelist[i]:
+            if openlist[i - 1] < closelist[i - 1]:
+                if openlist[i] > highlist[i -1] and closelist[i] < lowlist[i - 1]:
+                    iseater = 'sred'
+                elif openlist[i] > closelist[i - 1] and closelist[i] < openlist[i - 1]:
+                    iseater = 'wred'
         else:
-            top = float(closelist[i])
-            bot = float(openlist[i])
-
-        if openlist[i - 1] > closelist[i - 1]:  # checks if candle before eater open is top of candle or bot and uses the top one
-            pasttop = float(openlist[i - 1])  # of possible eater
-            pastbot = float(closelist[i - 1])
-        else:
-            pasttop = float(closelist[i - 1])
-            pastbot = float(openlist[i - 1])
-
-        if top > float(highlist[i - 1]) and bot < float(lowlist[i - 1]):
-            iseater = 2
-
-        elif top > pasttop and bot < pastbot:
-            iseater = 1
-
+            if openlist[i - 1] > closelist[i - 1]:
+                if closelist[i] > highlist[i - 1] and openlist[i] < lowlist[i - 1]:
+                    iseater = 'sgreen'
+                elif closelist[i] > openlist[i - 1] and openlist[i] < closelist[i - 1]:
+                    iseater = 'wgreen'
         eaterlist.append(iseater)
+
+
     return eaterlist
 
 

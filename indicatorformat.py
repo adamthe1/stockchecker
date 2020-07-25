@@ -6,7 +6,7 @@ import csv
 from datetime import datetime
 from threading import Thread
 from trendline import getgoodeqs, changevars, checkclose
-from macdtest import findmacd, findemaofmacd
+from macddone import findmacd, findemaofmacd
 
 class data4stocks():
     def __init__(self):

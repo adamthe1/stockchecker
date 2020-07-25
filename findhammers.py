@@ -22,11 +22,12 @@ def getdailydata(name):
             symbol_data['close'], symbol_data['timestamp'], name, symbol_data['volume'])
 
 
-stockname = input('pls stock name quick boi: ')
-data = getdailydata(stockname)
+
 
 
 def main():
+    stockname = input('pls stock name quick boi: ')
+    data = getdailydata(stockname)
     openlist = data[0]
     closelist = data[3]
     highlist = data[1]
@@ -70,20 +71,20 @@ def main():
 
 def ishammer(spotdata):  # spot data is a list of [open, high, low, close] of the spot its checking
     openp, high, low, close = spotdata
-    if openp - close > 0:
+    if close - openp > 0:
         first = isgreenhammer(spotdata)
         second = isgreenhammer2(spotdata)
         if first and second:
             return 'sgreen'
         elif first or second:
-            return 'ngreen'
+            return 'wgreen'
     else:
         first = isredhammer(spotdata)
         second = isredhammer2(spotdata)
         if first and second:
             return 'sred'
         elif first or second:
-            return 'nred'
+            return 'wred'
     return 'no'
 
 

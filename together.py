@@ -1,5 +1,5 @@
 def main():
-    trendys = open('100stocks.txt', 'r')
+    trendys = open('stocks100.txt', 'r')
     tog = open('togethers.txt', 'w')
     amn = 0
     for trline in trendys:

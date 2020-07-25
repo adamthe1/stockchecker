@@ -57,6 +57,7 @@ def changevars(h, edge, ext):
 
 def plotforstock(stock):  # to show plot of desired stock with trendline
     data = getdailydata(stock)
+    changevars(0.1, 10, 4)
     if data == 'bad':
         exit(1)
     openpoints = data[0]
@@ -139,7 +140,6 @@ def plotforstock(stock):  # to show plot of desired stock with trendline
             bot = int(input('which bot line: '))
             eqmax = goodmaxeqs[top]
             eqmin = goodmineqs[bot]
-
         xmax = np.array(range(len(highpoints) + 10))     # show lines on plot
         ymax = xmax * eqmax.slope + eqmax.n
         xmin = np.array(range(len(lowpoints)))
@@ -218,7 +218,8 @@ hfromline = 0.1  #  height the maximum or minimum has to be from the trendline i
 
 
 def findtheones():
-    myfile = open('100stocks.txt', 'w')
+    myfile = open('stocks100.txt', 'w')
+    changevars(0.05, 8, 4)
     start = 0
     end = len(stocklist)
     for number in range(start, end):
@@ -458,7 +459,7 @@ def findmax(points):
         if i < extfac - 1:
             continue
         checker = []
-        for j in range(-1 * extfac, extfac):
+        for j in range(-1 * extfac, extfac + 1):
             checker.append(points[i + j])
         if checker.index(max(checker)) == extfac:
             maximums.append(i)
@@ -471,7 +472,7 @@ def findmin(points):
         if i < extfac - 1:
             continue
         checker = []
-        for j in range(-1 * extfac, extfac):
+        for j in range(-extfac, extfac + 1):
             checker.append(points[i + j])
         if checker.index(min(checker)) == extfac:
             minimums.append(i)

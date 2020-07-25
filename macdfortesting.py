@@ -45,12 +45,15 @@ def plotforone():
         macd.pop(num)
     for some in range(len(macd) - 20, len(macd)):
         macdplot.append(macd[some])
-    print(macd)
-    print(ema)
+    # print(macd)
+    # print(ema)
     macdspot = np.array(range(len(macd)))
     emaspot = np.array(range(len(ema)))
     nicenice = []
     xaxis = []
+    xvaluestest = []
+    yvaluestest = []
+    print(len(ema))
     for num in range(len(ema)):
         xaxis.append(0)
         nicenice.append(macd[num] - ema[num])
@@ -61,6 +64,26 @@ def plotforone():
                 plt.plot(xvalues, yvalues, color='green')
             else:
                 plt.plot(xvalues, yvalues, color='red')
+        if num < 3:
+            continue
+
+        chk3close = False
+        yes3dif = macd[num - 3] - ema[num - 3]
+        yes2dif = macd[num - 2] - ema[num - 2]
+        yesdif = macd[num - 1] - ema[num - 1]
+        nowdif = macd[num] - ema[num]
+        closefac = 2.5  # how much the now dif has to be than the yesdif
+
+        # if past four days the macd has been getting closer and today it got close by at least 2.5 more than last time
+        # its getting close so its almost like cut
+        if abs(yes3dif) > abs(yes2dif) > abs(yesdif) > abs(nowdif) and abs(yesdif) / closefac > abs(nowdif):
+            xvaluestest.append(num)
+            yvaluestest.append(macd[num] + 0.5)
+
+    print(xvaluestest)
+    print(yvaluestest)
+    plt.scatter(xvaluestest, yvaluestest, color='cyan', s=5)
+
     plt.plot(emaspot, xaxis, color='black', linewidth=1)
     plt.plot(emaspot, ema, color='orange')
     plt.plot(macdspot, macd, color='blue')
