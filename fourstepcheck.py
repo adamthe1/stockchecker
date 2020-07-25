@@ -134,10 +134,10 @@ class stock():
 
         self.checkdays = 4
         self.hammerlist = []
-        self.gethammerlist()   # get hammers
+        self.gethammerlist()  # get hammers
 
         self.eaterlist = None
-        self.geteaterlist()    # get eater
+        self.geteaterlist()  # get eater
 
         self.isbetweeneqs = []  # check eqs the last one is between
         self.isbetween()
@@ -147,6 +147,7 @@ class stock():
 
         self.upordown = []  # check if slope of eq is up or down -
         # list the same size of eqs list that has up or down for each
+        # when do checks just see if up or down for the if
         self.checkupordown()
 
         self.macdcuts = self.checkmacdcut()
@@ -159,7 +160,7 @@ class stock():
         self.closetop = [int(i) for i in closetop]
 
     def gethammerlist(self):
-        self.hammerlist = []   # so that if i call it again with diffrent vars its empty
+        self.hammerlist = []  # so that if i call it again with diffrent vars its empty
         for i in range(self.checkdays, 0, -1):
             spotdata = [self.openpoints[-i], self.highpoints[-i], self.lowpoints[-i], self.closepoints[-i]]
             self.hammerlist.append(ishammer(spotdata))
@@ -172,7 +173,7 @@ class stock():
         self.eaterlist.pop(0)  # because first one wasn't even checked so we need only past checkdays days
 
     def isbetween(self):
-        self.isbetweeneqs = []   # so that if i call it again with diffrent vars its empty
+        self.isbetweeneqs = []  # so that if i call it again with diffrent vars its empty
         # checks if last candle is between the eqs and saves the spot of the eqs it is between
         for i in range(len(self.topeqs)):
             x = len(self.closepoints) - 1
@@ -180,7 +181,7 @@ class stock():
                     or (yofx(self.boteqs[i], x) < self.openpoints[-1] < yofx(self.topeqs[i], x)):
                 self.isbetweeneqs.append(i)
 
-    def checkupordown(self):    # checks if the trendline is an upslope or downslope (bull or bear)
+    def checkupordown(self):  # checks if the trendline is an upslope or downslope (bull or bear)
         for i in range(len(self.topeqs)):  # maybe fix make dictionary
             if self.topeqs[i].slope > veryup:
                 self.upordown.append('vup')
@@ -192,8 +193,6 @@ class stock():
                 self.upordown.append('bdown')
             else:
                 self.upordown.append('norm')
-
-
 
     def checkchk2(self):
         upchk2 = []
@@ -216,25 +215,25 @@ class stock():
             yes2dif = self.macd[i - 2] - self.emamacd[i - 2]
             yesdif = self.macd[i - 1] - self.emamacd[i - 1]
             nowdif = self.macd[i] - self.emamacd[i]
-            if nowdif > 0 > yesdif:    # if its a cut up its buy
-                if self.macd[i] > 0:   # if above 0 its strong
+            if nowdif > 0 > yesdif:  # if its a cut up its buy
+                if self.macd[i] > 0:  # if above 0 its strong
                     chk3cut.append('sbuy')
-                elif self.macd[i] < 0:   # if under 0 its weak
+                elif self.macd[i] < 0:  # if under 0 its weak
                     chk3cut.append('wbuy')
-            elif nowdif < 0 < yesdif:   # same just opposite
+            elif nowdif < 0 < yesdif:  # same just opposite
                 if self.macd[i] < 0:
                     chk3cut.append('ssell')
                 elif self.macd[i] > 0:
                     chk3cut.append('wsell')
-            else:     # for the days its nothing in the 3 days
+            else:  # for the days its nothing in the 3 days
                 chk3cut.append(0)
         for i in chk3cut:
-            if i == 'sbuy' or i == 'wbuy':   # means it cut and make the check true
+            if i == 'sbuy' or i == 'wbuy':  # means it cut and make the check true
                 self.checks['check3'] = True
-                if i == 'sbuy':     # check if strong or weak
+                if i == 'sbuy':  # check if strong or weak
                     self.checks['check3info'] = 'macdb*'
                 else:
-                    self.checks['check3info'] = 'macdb'  #TODO add later when shorts
+                    self.checks['check3info'] = 'macdb'  # TODO add later when shorts
             """   
             if i == 'ssell' or i == 'wsell':    
                 self.checks['check'] = True
@@ -256,7 +255,7 @@ class stock():
         # its getting close so its almost like cut
         if abs(yes3dif) > abs(yes2dif) > abs(yesdif) > abs(nowdif) and abs(yesdif) / closefac > abs(nowdif):
             self.checks['check3'] = True
-            if yesdif < 0:      # same as normal cut macd
+            if yesdif < 0:  # same as normal cut macd
                 if self.macd[-1] > 0:
                     self.checks['check3info'] = 'pmacdb*'
                 if self.macd[-1] < 0:
@@ -276,7 +275,7 @@ class stock():
         for i in range(start, end):
             yesdif = self.plusdi[i - 1] - self.minusdi[i - 1]
             nowdif = self.plusdi[i] - self.minusdi[i]
-            if yesdif < 0 < nowdif:    # if +di cut the -di upwards
+            if yesdif < 0 < nowdif:  # if +di cut the -di upwards
                 if self.plusdi[i] - self.plusdi[i - 1] > vstrong:
                     chk4cuts.append('adxb**')
                 elif self.plusdi[i] - self.plusdi[i - 1] > strong:
@@ -293,35 +292,25 @@ class stock():
             else:
                 chk4cuts.append(0)
 
-        for i in chk4cuts:    # checks if adx cut and says the info i only care about last cut
+        for i in chk4cuts:  # checks if adx cut and says the info i only care about last cut
             if not i == 0:
                 self.checks['check4'] = True
                 self.checks['check4info'] = i
 
-    def adxstren(self):   # check how strong the slope is by checking adx: > 25 strong. > 40 - vstrong.
+    def adxstren(self):  # check how strong the slope is by checking adx: > 25 strong. > 40 - vstrong.
         pass
 
 
+def isstockgood(stockchk):
+    # TODO need take dictionary of checks of stocks and decide how good is stock and if to add to list or file of good stocks
+    # TODO by which order. order: check the notes in class stock start
+    pass
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+def writetofile(stock):
+    # TODO write to file stock ticker and info why its a good stock ex.
+    # NFLX trendlines: 9 (7 up) (2 ok) closebot: 0,1,3 closetop: 4 hammer/eater: (date) macdcut: (date). adx good/bad +DI cut.
+    pass
 
 """
 def fourstepcheck(stockdata):  # chk1 - check if candle close to line 2 - check if slope is up
@@ -418,6 +407,7 @@ def fourstepcheck(stockdata):  # chk1 - check if candle close to line 2 - check 
             if macdlist[i] < 0:
                 chk3cut.append('')
 """
+
 
 def yofx(eq, x):
     return x * eq.slope + eq.n

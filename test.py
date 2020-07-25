@@ -29,7 +29,7 @@ class stock():
         self.goodeqs = getgoodeqs(stockdata)  # find the eqs that are trendline and parallel
         self.topeqs = list(self.goodeqs[0])  # split them into top and bot
         self.boteqs = list(self.goodeqs[1])
-        print(self.topeqs[0].nums)
+        # print(self.topeqs[0].nums)
 
         self.macd = findmacd(stockdata)  # get macd
         self.emamacd = findemaofmacd(self.macd, 9)
@@ -49,8 +49,21 @@ class stock():
         self.eaterlist = eater(checklist)
         self.eaterlist.pop(0)  # because first one wasnt even checked so we need only past checkdays days
 
+
+# listofstocks = []
+
+
 def main():
-    stock1 = stock(getdailydata(str(input('name thing '))))
+    listofstocks = []
+    for i in ['LOW', 'NFLX', 'CMCSA']:
+        stock1 = stock(getdailydata(i))
+        for j in stock1.eaterlist:
+            if j != 'no':
+                print(stock1.eaterlist)
+                listofstocks.append(stock1)
+    for i in listofstocks:
+        print(i.stockdata[5])
+    """
     them = stock1.openpoints, stock1.highpoints, stock1.lowpoints, stock1.closepoints, stock1.volume
     plotshow(them)
     eq = regression(range(len(stock1.closepoints) - 30, len(stock1.closepoints)), stock1.closepoints[-30:])
@@ -59,7 +72,7 @@ def main():
     ymin = xmin * eq[0] + eq[1]
     plt.plot(xmin, ymin)  # same but min
     plt.show()
-
+    """
 
 
 
