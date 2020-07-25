@@ -302,14 +302,18 @@ class stock():
 
 
 def isstockgood(stockchk):
-    # TODO need take dictionary of checks of stocks and decide how good is stock and if to add to list or file of good stocks
-    # TODO by which order. order: check the notes in class stock start
+    # TODO need take dictionary of checks of stocks and decide how good is stock and if to add to list or file of
+    #  good stocks TODO by which order. order: check the notes in class stock start
+    bestbuy = []  # where there are trendlines that the last is close to bot. macd has cut is amazing then
+    # eater then
     pass
 
 
 def writetofile(stock):
+
     # TODO write to file stock ticker and info why its a good stock ex.
     # NFLX trendlines: 9 (7 up) (2 ok) closebot: 0,1,3 closetop: 4 hammer/eater: (date) macdcut: (date). adx good/bad +DI cut.
+
     pass
 
 """
