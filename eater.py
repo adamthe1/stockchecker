@@ -84,15 +84,15 @@ def eater(data):    # send back list where each spot tells you if strong eater o
         if openlist[i] > closelist[i]:
             if openlist[i - 1] < closelist[i - 1]:
                 if openlist[i] > highlist[i -1] and closelist[i] < lowlist[i - 1]:
-                    iseater = 'sred'
+                    iseater = 'esred'
                 elif openlist[i] > closelist[i - 1] and closelist[i] < openlist[i - 1]:
-                    iseater = 'wred'
+                    iseater = 'ewred'
         else:
             if openlist[i - 1] > closelist[i - 1]:
                 if closelist[i] > highlist[i - 1] and openlist[i] < lowlist[i - 1]:
-                    iseater = 'sgreen'
+                    iseater = 'esgreen'
                 elif closelist[i] > openlist[i - 1] and openlist[i] < closelist[i - 1]:
-                    iseater = 'wgreen'
+                    iseater = 'ewgreen'
         eaterlist.append(iseater)
 
 

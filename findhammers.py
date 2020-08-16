@@ -70,21 +70,25 @@ def main():
                 pass
 
 def ishammer(spotdata):  # spot data is a list of [open, high, low, close] of the spot its checking
+    """
+
+    :rtype:
+    """
     openp, high, low, close = spotdata
     if close - openp > 0:
         first = isgreenhammer(spotdata)
         second = isgreenhammer2(spotdata)
         if first and second:
-            return 'sgreen'
+            return 'hsgreen'
         elif first or second:
-            return 'wgreen'
+            return 'hwgreen'
     else:
         first = isredhammer(spotdata)
         second = isredhammer2(spotdata)
         if first and second:
-            return 'sred'
+            return 'hsred'
         elif first or second:
-            return 'wred'
+            return 'hwred'
     return 'no'
 
 

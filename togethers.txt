@@ -1,9 +1,18 @@
-AAPL,2020-07-21(sell)
-AAPL, len of eqs:12 stock open price: 387.9930114746094 closetopeqs:  closeboteqs: 3,4,5,6,10
-
 CL,2020-07-22(sell)
-CL, len of eqs:4 stock open price: 74.88999938964844 closetopeqs: 3 closeboteqs: 
+CL, len of eqs:4 stock open price: 74.7300033569336 closetopeqs: 3 closeboteqs: 
 
 GILD,2020-07-23(sell)
-GILD, len of eqs:3 stock open price: 76.43000030517578 closetopeqs: 0 closeboteqs: 
+GILD, len of eqs:6 stock open price: 75.47000122070312 closetopeqs:  closeboteqs: 4
+
+GOOG,2020-07-24(sell)
+GOOG, len of eqs:2 stock open price: 1498.9300537109375 closetopeqs:  closeboteqs: 0
+
+GOOGL,2020-07-24(sell)
+GOOGL, len of eqs:1 stock open price: 1499.18994140625 closetopeqs:  closeboteqs: 
+
+MRK,2020-07-24(sell)
+MRK, len of eqs:2 stock open price: 77.8499984741211 closetopeqs:  closeboteqs: 1
+
+T,2020-07-24(sell*)
+T, len of eqs:2 stock open price: 29.799999237060547 closetopeqs:  closeboteqs: 
 

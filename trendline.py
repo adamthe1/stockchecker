@@ -57,7 +57,7 @@ def changevars(h, edge, ext):
 
 def plotforstock(stock):  # to show plot of desired stock with trendline
     data = getdailydata(stock)
-    changevars(0.1, 10, 4)
+    changevars(0.1, 7, 3)
     if data == 'bad':
         exit(1)
     openpoints = data[0]
@@ -120,6 +120,10 @@ def plotforstock(stock):  # to show plot of desired stock with trendline
                 if i % 2 == 1 and i > 0:
                     print('')
             print('\n')
+            changevars(0.1, 8, 4)
+            closetotopeqs, closetoboteqs = checkclose(goodeqs, highpoints, lowpoints)
+            print(closetotopeqs, closetoboteqs)
+            print(len(highpoints), len(lowpoints))
             theone = int(input("the parallel pls: "))  # which parallel would you like
             eqmax = maxgoodeqs[theone]     # actual plot
             eqmin = mingoodeqs[theone]

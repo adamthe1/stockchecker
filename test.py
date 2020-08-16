@@ -9,9 +9,10 @@ from findhammers import ishammer
 from adx import caladx
 from macddone import findmacd, findemaofmacd
 from trendline import getgoodeqs, changevars, checkclose, height
+from datetime import datetime
 
 
-class stock():
+class stock:
     def __init__(self, stockdata):
         self.stockdata = stockdata
 
@@ -54,25 +55,29 @@ class stock():
 
 
 def main():
-    listofstocks = []
-    for i in ['LOW', 'NFLX', 'CMCSA']:
-        stock1 = stock(getdailydata(i))
-        for j in stock1.eaterlist:
-            if j != 'no':
-                print(stock1.eaterlist)
-                listofstocks.append(stock1)
-    for i in listofstocks:
-        print(i.stockdata[5])
     """
+    listofstocks = []
+    stock1 = stock(getdailydata("TSLA"))
+    print(len(stock1.closepoints))
+
+
     them = stock1.openpoints, stock1.highpoints, stock1.lowpoints, stock1.closepoints, stock1.volume
     plotshow(them)
-    eq = regression(range(len(stock1.closepoints) - 30, len(stock1.closepoints)), stock1.closepoints[-30:])
+    eq = regression(range(len(stock1.closepoints) - 18, len(stock1.closepoints)), stock1.closepoints[-18:])
 
-    xmin = np.array(range(len(stock1.closepoints) - 30, len(stock1.closepoints)))
+    xmin = np.array(range(len(stock1.closepoints) - 18, len(stock1.closepoints)))
     ymin = xmin * eq[0] + eq[1]
+    print(eq[0])
     plt.plot(xmin, ymin)  # same but min
-    plt.show()
+    # plt.show()
+
+    list = '1234'
+    print(list[0:3])
     """
+    print(gethourlydata('USB')[0])
+    print(gethourlydata('USB')[1])
+    print(gethourlydata('USB')[2])
+
 
 
 
@@ -136,6 +141,53 @@ def getdailydata(name):
     # print(len(symbol_data['open']))
     return (symbol_data['open'], symbol_data['high'], symbol_data['low'],
             symbol_data['close'], symbol_data['timestamp'], name, symbol_data['volume'])
+
+
+def getfourhourdata(name):
+    my_share = share.Share(name)
+    symbol_data = None
+    try:
+        symbol_data = my_share.get_historical(share.PERIOD_TYPE_DAY, 30, share.FREQUENCY_TYPE_MINUTE, 60)
+    except YahooFinanceError as e:
+        print(e.message)
+        return 'bad'
+    goodhoursspot = []
+    for i in range(len(symbol_data['timestamp'])):
+        strdata = str(datetime.fromtimestamp(symbol_data['timestamp'][i] / 1000))
+        checker = strdata[14]
+        if checker == '3':
+            goodhoursspot.append(i)
+    # print(goodhoursspot)
+    # print(symbol_data['open'][5])
+    goodopenprices = []
+    goodhighprices = []
+    goodlowprices = []
+    goodcloseprices = []
+    goodhours = []
+    goodvolumes = []
+    keep = 0
+    for i in goodhoursspot:
+        if keep == 7:
+            keep = 0
+        if keep == 0 or keep == 4:
+            if keep == 0:
+                high = max(symbol_data['high'][i:i + 4])
+                low = min(symbol_data['low'][i:i + 4])
+            if keep == 4:
+                high = max(symbol_data['high'][i:i + 3])
+                low = min(symbol_data['low'][i:i + 3])
+            # print(str(datetime.fromtimestamp(symbol_data['timestamp'][i] / 1000)))
+            goodopenprices.append(symbol_data['open'][i])
+            goodhighprices.append(high)
+            goodlowprices.append(low)
+            goodcloseprices.append(symbol_data['close'][i])
+            goodhours.append(symbol_data['timestamp'][i])
+            goodvolumes.append(symbol_data['volume'][i])
+        keep += 1
+    # print(goodopenprices, goodhighprices, goodlowprices, goodcloseprices)
+    return goodopenprices, goodhighprices, goodlowprices, goodcloseprices, goodhours, name, goodvolumes
+
+
 
 
 
