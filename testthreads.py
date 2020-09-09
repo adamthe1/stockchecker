@@ -22,19 +22,24 @@ class data4stocks():
         self.data2 = []
         self.data3 = []
         self.data4 = []
+        self.data5 = []
+        self.data6 = []
 
 data = data4stocks()
-
+file = open('goodvolume.txt', 'w')
 
 def main(stocklist):
     try:
-        for i in range(0, len(stocklist), 4):
+        for i in range(0, len(stocklist), 6):
             print(i)
             Thread(target=first, args=(i,)).start()
             Thread(target=second, args=(i+1,)).start()
             Thread(target=third, args=(i+2,)).start()
             Thread(target=fourth, args=(i+3,)).start()
-            sleep(0.5)
+            Thread(target=fifth, args=(i+4,)).start()
+            Thread(target=sixth, args=(i+5,)).start()
+            sleep(0.1)
+
 
     except KeyboardInterrupt:
         print('ok then')
@@ -43,19 +48,39 @@ def main(stocklist):
 def first(spot):
     global data
     data.data1 = getdailydata(stocklist[spot])
+    if sum(data.data1[6][-15:])/15 > 800000:
+        file.write(str(data.data1[5]) + '\n')
+
 
 def second(spot):
     global data
     data.data2 = getdailydata(stocklist[spot])
+    if sum(data.data2[6][-15:])/15 > 800000:
+        file.write(str(data.data2[5]) + '\n')
 
 def third(spot):
     global data
     data.data3 = getdailydata(stocklist[spot])
+    if sum(data.data3[6][-15:])/15 > 800000:
+        file.write(str(data.data3[5]) + '\n')
 
 def fourth(spot):
     global data
     data.data4 = getdailydata(stocklist[spot])
+    if sum(data.data4[6][-15:])/15 > 800000:
+        file.write(str(data.data4[5]) + '\n')
 
+def fifth(spot):
+    global data
+    data.data5 = getdailydata(stocklist[spot])
+    if sum(data.data5[6][-15:]) / 15 > 800000:
+        file.write(str(data.data5[5]) + '\n')
+
+def sixth(spot):
+    global data
+    data.data6 = getdailydata(stocklist[spot])
+    if sum(data.data6[6][-15:]) / 15 > 800000:
+        file.write(str(data.data6[5]) + '\n')
 
 def getdailydata(name):
     stockname = name

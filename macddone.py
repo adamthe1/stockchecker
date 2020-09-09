@@ -62,12 +62,10 @@ def plotforone():
     data = getdailydata(stockname)
     if data == 'bad':
         exit(1)
-    choose = int(input('1 for ema 2 for macd: '))
-    if choose == 2:
-        pass
-    elif choose == 1:
-        plotforema(data)
-        exit(0)
+    days = int(input('to simulate days press the number of days to simulate or press 0: '))
+    if days != 0:
+        for i in range(days):
+            data[3].append(float(input(f'close price of {i} day: ')))
 
     macd = findmacd(data)
     sma = findsma(20, data)

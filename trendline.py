@@ -48,16 +48,19 @@ def main():
         findtheones()
 
 
-def changevars(h, edge, ext):
-    global hfromline, edgedays, extfac
+def changevars(h, edge, ext, timechk):
+    global hfromline, edgedays, extfac, time
     hfromline = h        # length from the trendline that it make it close to it
     edgedays = edge      # amount of days it checks after 3rd point
     extfac = ext         # how many bars the extremum has to be above from each side
+    time = -timechk
 
 
 def plotforstock(stock):  # to show plot of desired stock with trendline
-    data = getdailydata(stock)
-    changevars(0.1, 7, 3)
+    thedata = getdailydata(stock)
+    changevars(0.1, 8, 4, 100)
+    data = [thedata[0][time:], thedata[1][time:], thedata[2][time:], thedata[3][time:],
+            thedata[4][time:], thedata[5], thedata[6][time:]]
     if data == 'bad':
         exit(1)
     openpoints = data[0]
@@ -120,8 +123,8 @@ def plotforstock(stock):  # to show plot of desired stock with trendline
                 if i % 2 == 1 and i > 0:
                     print('')
             print('\n')
-            changevars(0.1, 8, 4)
-            closetotopeqs, closetoboteqs = checkclose(goodeqs, highpoints, lowpoints)
+            changevars(0.1, 8, 4, 100)
+            closetotopeqs, closetoboteqs = checkclose(goodeqs, highpoints, lowpoints, closepoints)
             print(closetotopeqs, closetoboteqs)
             print(len(highpoints), len(lowpoints))
             theone = int(input("the parallel pls: "))  # which parallel would you like
@@ -250,7 +253,7 @@ def findtheones():
             continue
         maxgoodeqs = list(goodeqs[0])
         mingoodeqs = list(goodeqs[1])
-        closetotopeqs, closetoboteqs = checkclose(goodeqs, highpoints, lowpoints)
+        closetotopeqs, closetoboteqs = checkclose(goodeqs, highpoints, lowpoints, closepoints)
 
         closetop = ','.join(closetotopeqs)
         closebot = ','.join(closetoboteqs)
@@ -266,17 +269,17 @@ def findtheones():
     myfile.close()
 
 
-def checkclose(goodeqs, highpoints, lowpoints):
+def checkclose(goodeqs, highpoints, lowpoints, closepoints):
     closetotopeqs = []
     closetoboteqs = []
     maxgoodeqs = list(goodeqs[0])
     mingoodeqs = list(goodeqs[1])
     for spot in range(len(maxgoodeqs)):
-        if abs(height(maxgoodeqs[spot], len(highpoints) - 1, float(highpoints[-1]))) \
+        if abs(height(maxgoodeqs[spot], len(highpoints) - 1, float(closepoints[-1]))) \
                 < (maxgoodeqs[spot].n - mingoodeqs[spot].n) * hfromline:
             isclose = True
             closetotopeqs.append(str(spot))
-        if abs(height(mingoodeqs[spot], len(lowpoints) - 1, float(lowpoints[-1]))) \
+        if abs(height(mingoodeqs[spot], len(lowpoints) - 1, float(closepoints[-1]))) \
                 < (maxgoodeqs[spot].n - mingoodeqs[spot].n) * hfromline:
             closetoboteqs.append(str(spot))
     return closetotopeqs, closetoboteqs
@@ -515,7 +518,7 @@ def getdailydata(name):
     my_share = share.Share(stockname)
     symbol_data = None
     try:
-        symbol_data = my_share.get_historical(share.PERIOD_TYPE_MONTH, 4, share.FREQUENCY_TYPE_DAY, 1)
+        symbol_data = my_share.get_historical(share.PERIOD_TYPE_MONTH, 6, share.FREQUENCY_TYPE_DAY, 1)
     except YahooFinanceError as e:
         print(e.message)
         return 'bad'

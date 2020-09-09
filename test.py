@@ -10,6 +10,7 @@ from adx import caladx
 from macddone import findmacd, findemaofmacd
 from trendline import getgoodeqs, changevars, checkclose, height
 from datetime import datetime
+import csv
 
 
 class stock:
@@ -52,31 +53,21 @@ class stock:
 
 
 # listofstocks = []
+stocklist = []
+# targetlist = 'stocklist.csv'
+targetlist = 'smp100.csv'
 
+with open(targetlist, 'r') as stocks:
+    stockreader = csv.reader(stocks, delimiter='\n')
+    for row in stockreader:
+        stocklist.append(row[0])
 
 def main():
-    """
+
     listofstocks = []
     stock1 = stock(getdailydata("TSLA"))
     print(len(stock1.closepoints))
 
-
-    them = stock1.openpoints, stock1.highpoints, stock1.lowpoints, stock1.closepoints, stock1.volume
-    plotshow(them)
-    eq = regression(range(len(stock1.closepoints) - 18, len(stock1.closepoints)), stock1.closepoints[-18:])
-
-    xmin = np.array(range(len(stock1.closepoints) - 18, len(stock1.closepoints)))
-    ymin = xmin * eq[0] + eq[1]
-    print(eq[0])
-    plt.plot(xmin, ymin)  # same but min
-    # plt.show()
-
-    list = '1234'
-    print(list[0:3])
-    """
-    print(gethourlydata('USB')[0])
-    print(gethourlydata('USB')[1])
-    print(gethourlydata('USB')[2])
 
 
 

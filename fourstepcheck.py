@@ -1,17 +1,17 @@
-from typing import Union
+
 
 from yahoo_finance_api2 import share
 from yahoo_finance_api2.exceptions import YahooFinanceError
 import numpy as np
 import matplotlib.pyplot as plt
 import csv
-from datetime import datetime
 from threading import Thread
 from trendline import getgoodeqs, changevars, checkclose, height
 from macddone import findmacd, findemaofmacd
 from adx import caladx
 from findhammers import ishammer
 from eater import eater
+from time import time
 
 
 class Data4stocks():
@@ -21,51 +21,155 @@ class Data4stocks():
         data3 = []
         data4 = []
         data5 = []
+        data6 = []
+        data7 = []
+        data8 = []
 
 
 data = Data4stocks()  # class to thread 5 stock datas together
-
-stocklist = []
-# targetlist = 'stocklist.csv'
-targetlist = 'smp100.csv'
-
-with open(targetlist, 'r') as stocks:
-    stockreader = csv.reader(stocks, delimiter='\n')
-    for row in stockreader:
-        stocklist.append(row[0])
-
-print(stocklist)
+def gettickerlist(choice):
+    if choice == 0:
+        stocklist = []
+        targetlist = 'smp100.csv'
+        with open(targetlist, 'r') as stocks:
+            stockreader = csv.reader(stocks, delimiter='\n')
+            for row in stockreader:
+                stocklist.append(row[0])
+    elif choice == 1:
+        stocklist = []
+        targetlist = 'nasdaq.csv'
+        with open(targetlist, 'r') as stocks:
+            stockreader = csv.reader(stocks, delimiter='\n')
+            for row in stockreader:
+                stocklist.append(row[0])
+    elif choice == 2:
+        stocklist = []
+        targetlist = 'amex.csv'
+        with open(targetlist, 'r') as stocks:
+            stockreader = csv.reader(stocks, delimiter='\n')
+            for row in stockreader:
+                stocklist.append(row[0])
+    elif choice == 3:
+        stocklist = []
+        targetlist = 'nyse.csv'
+        with open(targetlist, 'r') as stocks:
+            stockreader = csv.reader(stocks, delimiter='\n')
+            for row in stockreader:
+                stocklist.append(row[0])
+    elif choice == 4:
+        stocklist = []
+        targetlist = 'stocklist.csv'
+        with open(targetlist, 'r') as stocks:
+            stockreader = csv.reader(stocks, delimiter='\n')
+            for row in stockreader:
+                stocklist.append(row[0])
+    elif choice == 5:
+        stocklist = []
+        targetlist = 'goodvolume.csv'
+        with open(targetlist, 'r') as stocks:
+            stockreader = csv.reader(stocks, delimiter='\n')
+            for row in stockreader:
+                stocklist.append(row[0])
+    print(stocklist)
+    return stocklist
 
 
 def main():
     choose = input('for stock plot 1, for 4 step check stocks good 2: ')
+    firsttime = time()
     if int(choose) == 1:
         stockplot()
     if int(choose) == 2:
-        changevars(0.1, 8, 4)
+        scoredict = {}  # dictionary where the key is the ticker of the stock and the value will be the score of the
+        # stock and the check dictionary of the stock
+        changevars(0.1, 8, 4, 100)
         sumofgoods = 0
-        for spot in stocklist:
-            stockdata = getdailydata(spot)
-            if stockdata == 'bad':
-                print('bad')
-                continue
-            stock1 = stock(stockdata)
-            print(spot)
-            if stock1.checks['check1'] or stock1.checks['check3'] or stock1.isbetweeneqs:
-                sumofgoods += 1
-                for i in range(len(stock1.topeqs)):
-                    print(stock1.topeqs[i].slope, stock1.topeqs[i].n)
-                    print(stock1.boteqs[i].slope, stock1.boteqs[i].n)
-                print(stock1.closetop, stock1.closebot)
-                for num in range(1, 7):
-                    print(str(num) + ': ' + str(stock1.checks[f'check{num}']))
-                    if num in [3, 4, 5, 6]:
-                        if stock1.checks[f'check{num}']:
-                            print(stock1.checks[f'check{num}info'])
-                if 'check4s' in stock1.checks.keys():
-                    print('check4s is True')
-                print(isstockgood(stock1))
-        print(sumofgoods)
+        marketchoose = 6
+        while not 6 > marketchoose > -1:
+            marketchoose = int(input('for smp100 press 0 for nasdaq press 1 for amex press 2 for nyse press 3\n '
+                                     'for all press 4, for volume over 800000 press 5: '))
+        stocklist = gettickerlist(marketchoose)
+        for spot in range(0, len(stocklist), 8):
+            if spot - 50 > 0:
+                print(str((spot / len(stocklist)) * 100) + '%')
+            print(stocklist[spot:spot + 8])
+            if len(stocklist) - spot > 8 and len(stocklist) - spot != 0:
+                ts = threader(spot, stocklist)  #returns how many threads there are
+                for t in range(ts):
+                    if len(stocklist) < spot + t:
+                        break
+                    if t == 0:
+                        stockdata = data.data1
+                    elif t == 1:
+                        stockdata = data.data2
+                    elif t == 2:
+                        stockdata = data.data3
+                    elif t == 3:
+                        stockdata = data.data4
+                    elif t == 4:
+                        stockdata = data.data5
+                    elif t == 5:
+                        stockdata = data.data6
+                    elif t == 6:
+                        stockdata = data.data7
+                    elif t == 7:
+                        stockdata = data.data8
+                    if stockdata == 'bad':
+                        print('bad')
+                        continue
+                    """
+                    if stockdata[6][-1] < 1000000:
+                        print('not enough volume')
+                        continue
+                    if len(stockdata[0]) < 82:
+                        print('not enough data')
+                        continue
+                    """
+
+
+                    try:
+                        stock1 = Stock(stockdata)
+                    except TypeError:
+                        print('type error')
+                        continue
+                    except ZeroDivisionError:
+                        print('zero division error')
+                        continue
+
+                    score = isstockgood(stock1)
+                    scoredict[stocklist[spot + t]] = {'score': score, 'info': stock1.checks}
+            else:
+                for i in range(spot, len(stocklist)):
+                    stockdata = getdailydata(stocklist[i])
+                    if stockdata == 'bad':
+                        print('bad')
+                        continue
+                    """
+                    if stockdata[6][-1] < 1000000:
+                        print('not enough volume')
+                        continue
+                    if len(stockdata[0]) < 82:
+                        print('not enough data')
+                        continue
+                    """
+                    try:
+                        stock1 = Stock(stockdata)
+                    except TypeError:
+                        print('type error')
+                        continue
+                    except ZeroDivisionError:
+                        print('zero division error')
+                        continue
+                    score = isstockgood(stock1)
+                    scoredict[stocklist[i]] = {'score': score, 'info': stock1.checks}
+        sorteddict = {k: v for k, v in sorted(scoredict.items(), key=lambda item: item[1]['score'], reverse=True)}
+
+            #for keys, values in sorteddict.items():
+             #   print(keys)
+              #  print(values)
+        writetofile(sorteddict, marketchoose)
+    lasttime = time()
+    print(lasttime - firsttime)
 
 
 
@@ -99,30 +203,29 @@ def stockplot():
     plt.show()
 
 
-def checkstocks():
-    start = 0
-    end = len(stocklist)
-    for spot in range(start, end):
-        ts = threader(spot)  # amount of stocks data4stocks is storing
-        for t in ts:
-            try:
-                if t == 0:
-                    pass
-                if t == 1:
-                    pass
-                if t == 2:
-                    pass
-                if t == 3:
-                    pass
-                if t == 4:
-                    pass
-            except TypeError:
-                print('(TypeError) this stock nope: ' + stocklist[spot + t])
-            except IndexError:
-                print('(IndexError) this stock shits: ' + stocklist[spot + t])
+def threader(spot, stocklist):
+    check = 0
+    try:
+        t1 = Thread(target=first, args=(stocklist[spot],))
+        t2 = Thread(target=second, args=(stocklist[spot + 1],))
+        t3 = Thread(target=third, args=(stocklist[spot + 2],))
+        t4 = Thread(target=fourth, args=(stocklist[spot + 3],))
+        t5 = Thread(target=fifth, args=(stocklist[spot + 4],))
+        t6 = Thread(target=sixth, args=(stocklist[spot + 5],))
+        t7 = Thread(target=seventh, args=(stocklist[spot + 6],))
+        t8 = Thread(target=eight, args=(stocklist[spot + 7],))
+        threads = [t1, t2, t3, t4, t5, t6, t7, t8]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
+    except KeyboardInterrupt:
+        print('we out boys')
+        exit(-1)
+    return len(threads)
 
 
-class stock:
+class Stock:
     def __init__(self, stockdata):
 
         self.stockdata = stockdata
@@ -139,8 +242,8 @@ class stock:
         # for check 4 - checks if good trend (more than 25)
         # 3, 4, 5, 6 have info
 
-        time = -82  # how long ago for trendlines to check 82 is 4 months
-        if len(self.openpoints) < 82:
+        time = -100  # how long ago for trendlines to check 82 is 4 months
+        if len(self.openpoints) < -time:
             time = -len(self.openpoints)
         stockforlines = [self.openpoints[time:], self.highpoints[time:], self.lowpoints[time:],
                          self.closepoints[time:], self.stockdata[4][time:], self.stockdata[5], self.stockdata[6][time:]]
@@ -150,7 +253,8 @@ class stock:
 
         # check if last candle is close to the trendline returns list of all stock trendlines
         # that the last one is close to
-        self.closetop, self.closebot = checkclose(self.goodeqs, self.highpoints[time:], self.lowpoints[time:])   #TODO fix
+        self.closetop, self.closebot = checkclose(self.goodeqs, self.highpoints[time:], self.lowpoints[time:],
+                                                  self.closepoints[time:])   #TODO fix
         # self.closebot = [int(i) for i in self.closebot]  # convert them to integers
         # self.closetop = [int(i) for i in self.closetop]
 
@@ -184,7 +288,7 @@ class stock:
         self.isbetween()
 
         if self.closebot or self.closetop:
-            self.checks['check1'] = True
+            self.checks['check1'] = (self.closetop, self.closebot)
             if self.closebot and self.closetop:
                 self.checks['check1info'] = 'dual'
             elif self.closetop:
@@ -194,7 +298,7 @@ class stock:
         else:
             self.checks['check1'] = False
 
-        self.bitup = self.closepoints[-1] * 0.002  # amount the slope has
+        self.bitup = self.closepoints[-1] * 0.002  # amount the slope has #TODO
         # to be above to be very up or a bit up for down its the same just minus
         self.veryup = self.closepoints[-1] * 0.007  # if go up by 0.8% every day
         self.upordown = []  # check if slope of eq is up or down -
@@ -211,6 +315,11 @@ class stock:
         self.adxstren()
 
     #def isclose(self):
+        tdays = 15
+        self.great = (sum(self.closepoints[-tdays:]) / tdays) * 0.01  # greatslope is when it goes up everyday 1 percent of the
+        # price
+        self.good = (sum(self.closepoints[-tdays:]) / tdays) * 0.006  # goodslope is when it goes up 0.6 % of the price
+
 
 
     def gethammerlist(self):
@@ -272,11 +381,13 @@ class stock:
             yesdif = self.macd[i - 1] - self.emamacd[i - 1]
             nowdif = self.macd[i] - self.emamacd[i]
             if nowdif > 0 > yesdif:  # if its a cut up its buy
+                day = i
                 if self.macd[i] > 0:  # if above 0 its strong
                     chk3cut.append('sbuy')
                 elif self.macd[i] < 0:  # if under 0 its weak
                     chk3cut.append('wbuy')
             elif nowdif < 0 < yesdif:  # same just opposite
+                day = 1
                 if self.macd[i] < 0:
                     chk3cut.append('ssell')
                 elif self.macd[i] > 0:
@@ -285,7 +396,7 @@ class stock:
                 chk3cut.append(0)
         for i in chk3cut:
             if i == 'sbuy' or i == 'wbuy':  # means it cut and make the check true
-                self.checks['check3'] = True
+                self.checks['check3'] = day
                 if i == 'sbuy':  # check if strong or weak
                     self.checks['check3info'] = 'macdb*'
                 else:
@@ -312,7 +423,7 @@ class stock:
         # if past four days the macd has been getting closer and today it got close by at least 2.5 more than last time
         # its getting close so its almost like cut
         if abs(yes3dif) > abs(yes2dif) > abs(yesdif) > abs(nowdif) and abs(yesdif) / closefac > abs(nowdif):
-            self.checks['check3'] = True
+            self.checks['check3'] = 0
             if yesdif < 0:  # same as normal cut macd
                 if self.macd[-1] > 0:
                     self.checks['check3info'] = 'pmacdb*'
@@ -361,9 +472,11 @@ class stock:
         days = 15
         start = len(self.closepoints) - days  # the days is how many days back to check the regression for strength adx
         end = len(self.closepoints)
-        greatslope = self.closepoints[-days // 2] * 0.01  # greatslope is when it goes up everyday 1 percent of the
+        greatslope = (sum(self.closepoints[-days:]) / days) * 0.01  # greatslope is when it goes up everyday 1 percent of the
         # price
-        goodslope = self.closepoints[-days // 2] * 0.006  # goodslope is when it goes up 0.6 % of the price
+
+        goodslope = (sum(self.closepoints[-days:]) / days) * 0.006  # goodslope is when it goes up 0.6 % of the price
+
         slopedays = regression(np.array(range(start, end)), self.closepoints[-days:])  # gives me the slope and n of
         # past days as [0] = slope [1] = n
         strong = 25
@@ -403,39 +516,48 @@ def isstockgood(stockchk):
     # dip** = 1.6 dip* = 1.2 dip = 1  (check5)
     #  eater strong if today = 0.7 weak 0.65. not today strong 0.5 weak 0.45.
     #  hammer today = 0.4 not today 0.3
-    if stockchk.checks['check1'] or stockchk.isbetweeneqs:
-        # now all the checks for an long (buy)
+
+    # now all the checks for an long (buy)
+    if stockchk.checks['check1']:
         if stockchk.checks['check1info'] == 'dual' or stockchk.checks['check1info'] == 'bot':
-            score += 3
-        if stockchk.checks['check3']:
-            if stockchk.checks['check3info'][-1] == '*':
-                if stockchk.checks['check3info'][-2] == 'b':
+                score += 4
+    if stockchk.checks['check3']:
+        if stockchk.checks['check3info'][-1] == '*':
+            if stockchk.checks['check3info'][-2] == 'b':
+                score += 2
+        elif stockchk.checks['check3info'][-1] == 'b':
+            score += 1.5
+    if stockchk.checks['check5']:
+        if stockchk.checks['check5info'][-3:] == 'p**':
+            score += 1.6
+        elif stockchk.checks['check5info'][-2:] == 'p*':
+            score += 1.2
+        elif stockchk.checks['check5info'][-1] == 'p':
+            score += 1
+
+    if stockchk.checks['check6'] == -1:
+        if stockchk.checks['check6info'][0:2] == 'es':
+            score += 0.7
+        elif stockchk.checks['check6info'][0:2] == 'ew':
+            score += 0.6
+        elif stockchk.checks['check6info'][0:2] == 'hs' or stockchk.checks['check6info'][0:3] == 'hw':
+            score += 0.4
+
+    elif stockchk.checks['check6'] != False:
+        if stockchk.checks['check6info'][0:2] == 'es':
+            score += 0.5
+        elif stockchk.checks['check6info'][0:2] == 'ew':
+            score += 0.45
+        elif stockchk.checks['check6info'][0:2] == 'hs' or stockchk.checks['check6info'][0:3] == 'hw':
+            score += 0.3
+
+    if 'check4s' in stockchk.checks.keys():
+        score += 1.3
+    if stockchk.checks['check4']:
+        if stockchk.isbetweeneqs:
+            for eqspot in stockchk.isbetweeneqs:
+                if stockchk.topeqs[eqspot].slope > stockchk.great:
                     score += 2
-            elif stockchk.checks['check3info'][-1] == 'b':
-                score += 1.5
-        if stockchk.checks['check5']:
-            if stockchk.checks['check5info'][-3:] == 'p**':
-                score += 1.6
-            elif stockchk.checks['check5info'][-2:] == 'p*':
-                score += 1.2
-            elif stockchk.checks['check5info'][-1] == 'p':
-                score += 1
-
-        if stockchk.checks['check6'] == -1:
-            if stockchk.checks['check6info'][0:2] == 'es':
-                score += 0.7
-            elif stockchk.checks['check6info'][0:2] == 'ew':
-                score += 0.6
-            elif stockchk.checks['check6info'][0:2] == 'hs' or stockchk.checks['check6info'][0:3] == 'hw':
-                score += 0.4
-
-        elif stockchk.checks['check6'] != False:
-            if stockchk.checks['check6info'][0:2] == 'es':
-                score += 0.5
-            elif stockchk.checks['check6info'][0:2] == 'ew':
-                score += 0.45
-            elif stockchk.checks['check6info'][0:2] == 'hs' or stockchk.checks['check6info'][0:3] == 'hw':
-                score += 0.3
 
     return score
 
@@ -446,10 +568,43 @@ def isstockgood(stockchk):
 
 
 
-def writetofile(stock):
+
+
+def writetofile(stockdict, choice):   # gets a sorted dictionary of the tickers and their scores
     # TODO write to file stock ticker and info why its a good stock ex.
     # NFLX trendlines: 9 (7 up) (2 ok) closebot: 0,1,3 closetop: 4 hammer/eater: (date) macdcut: (date).
     # adx good/bad +DI cut.
+    numofchecks = 6
+    tickers = stockdict.keys()
+    if choice != 5:
+        file = open('longtest.txt', 'w')
+    else:
+        file = open('volumestocks.txt', 'w')
+    for spot, tick in enumerate(tickers):
+        # print(tick, spot)
+        title = f'{spot}: {tick} score = {str(stockdict[tick]["score"])}\n'
+        info = ['info: ']
+        checks = stockdict[tick]['info']
+        once = True
+        for i in range(1, numofchecks + 1):
+            value = stockdict[tick]['info'][f'check{i}']
+            if value:
+                info.append(f'{str(i)}: was {value} days ago')
+                if i != 2:
+                    valueinfo = stockdict[tick]['info'][f'check{i}info']
+                    info.append(f'what: {str(valueinfo)}')
+                info.append('|')
+            if len(info) / 6 >= 1:
+                if once:
+                    info.append('\n')
+                    info.append(' ' * (len(info[0]) - 2))
+                    once = False
+        info.append('\n\n')
+        infostr = '  '.join(info)
+        file.write(str(title) + str(infostr))
+
+
+
 
     pass
 
@@ -568,47 +723,47 @@ def regression(listpointsx, listpointsy):
     return slope, n
 
 
-def threader(spot):
-    try:
-        t1 = Thread(target=first, args=(spot,))
-        t2 = Thread(target=second, args=(spot + 1,))
-        t3 = Thread(target=third, args=(spot + 2,))
-        t4 = Thread(target=fourth, args=(spot + 3,))
-        t5 = Thread(target=fifth, args=(spot + 4,))
-        threads = [t1, t2, t3, t4, t5]
-        for t in threads:
-            t.start()
-        for t in threads:
-            t.join()
-    except KeyboardInterrupt:
-        print('we out boys')
-        exit(-1)
-    return len(threads)
 
 
-def first(spot):
+
+def first(stock):
     global data
-    data.data1 = getdailydata(stocklist[spot])
+    data.data1 = getdailydata(stock)
 
 
-def second(spot):
+def second(stock):
     global data
-    data.data2 = getdailydata(stocklist[spot])
+    data.data2 = getdailydata(stock)
 
 
-def third(spot):
+def third(stock):
     global data
-    data.data3 = getdailydata(stocklist[spot])
+    data.data3 = getdailydata(stock)
 
 
-def fourth(spot):
+def fourth(stock):
     global data
-    data.data4 = getdailydata(stocklist[spot])
+    data.data4 = getdailydata(stock)
 
 
-def fifth(spot):
+def fifth(stock):
     global data
-    data.data5 = getdailydata(stocklist[spot])
+    data.data5 = getdailydata(stock)
+
+
+def sixth(stock):
+    global data
+    data.data6 = getdailydata(stock)
+
+
+def seventh(stock):
+    global data
+    data.data7 = getdailydata(stock)
+
+
+def eight(stock):
+    global data
+    data.data8 = getdailydata(stock)
 
 
 def getdailydata(name):
